@@ -212,12 +212,7 @@ export default function UserDetails({ params }: { params: { id: string } }) {
                 {orders.map((order) => (
                   <tr key={order.id} className="text-white">
                     <td className="py-4">#{order.id.slice(-6)}</td>
-                    <td className="py-4">
-                      <div>{order.artwork.title}</div>
-                      <div className="text-sm text-gray-400">
-                        ${order.artwork.price}
-                      </div>
-                    </td>
+
                     <td className="py-4">${order.amount}</td>
                     <td className="py-4">
                       <span
