@@ -1,103 +1,125 @@
 "use client";
 
-import Link from "next/link";
+import { useEffect, useState } from "react";
+import { supabase } from "../../lib/supabase";
+import Image from "next/image";
 
-interface Category {
-  name: string;
-  icon: string;
-  gradient: string;
+interface Artwork {
+  id: string;
+  title: string;
+  description: string;
+  price: number;
+  image_url: string;
+  category: string;
+  artist: string;
+  status: string;
 }
 
-export default function CategoryScroll({
-  categories,
-}: {
-  categories: Category[];
-}) {
-  const scrollLeft = () => {
-    const container = document.querySelector(".horizontal-scroll");
-    container?.scrollBy({ left: -300, behavior: "smooth" });
-  };
+export default function CategoryScroll() {
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [artworks, setArtworks] = useState<Artwork[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const scrollRight = () => {
-    const container = document.querySelector(".horizontal-scroll");
-    container?.scrollBy({ left: 300, behavior: "smooth" });
+  const categories = [
+    "all",
+    "abstract",
+    "landscape",
+    "portrait",
+    "modern",
+    "digital painting",
+    "3D art",
+    "illustration",
+    "pixel art",
+    "photography",
+    "concept art",
+    "animation",
+    "mixed media",
+    "other",
+  ];
+
+  useEffect(() => {
+    fetchArtworks();
+  }, [selectedCategory]);
+
+  const fetchArtworks = async () => {
+    try {
+      setLoading(true);
+      let query = supabase
+        .from("artworks")
+        .select("*")
+        .eq("status", "available");
+
+      if (selectedCategory !== "all") {
+        query = query.eq("category", selectedCategory);
+      }
+
+      const { data: artworksData, error } = await query;
+
+      if (error) throw error;
+      if (artworksData) {
+        setArtworks(artworksData);
+      }
+    } catch (error) {
+      console.error("Error fetching artworks:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="relative">
-      {/* Gradient Overlay - Left */}
-      <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-gray-50 dark:from-dark-200 to-transparent z-10" />
-
-      {/* Gradient Overlay - Right */}
-      <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-gray-50 dark:from-dark-200 to-transparent z-10" />
-
-      {/* Scrollable Container */}
-      <div className="horizontal-scroll scroll-smooth scrollbar-hide">
-        <div className="flex gap-6 pb-4 min-w-max px-4">
+    <div className="py-8">
+      {/* Kategori Scroll */}
+      <div className="overflow-x-auto pb-4">
+        <div className="flex space-x-4 min-w-max px-4">
           {categories.map((category) => (
-            <Link
-              key={category.name}
-              href={`/gallery${
-                category.name === "All"
-                  ? ""
-                  : `?category=${category.name.toLowerCase()}`
+            <button
+              key={category}
+              onClick={() => setSelectedCategory(category)}
+              className={`px-4 py-2 rounded-lg text-sm font-light transition-colors ${
+                selectedCategory === category
+                  ? "bg-white/10 text-white"
+                  : "text-gray-400 hover:text-white"
               }`}
-              className="group flex flex-col items-center min-w-[200px] p-6 rounded-2xl bg-white dark:bg-dark-300/50 hover:bg-gradient-to-br hover:from-purple-500/10 hover:to-pink-500/10 transition-all duration-300 backdrop-blur-sm"
             >
-              <div
-                className={`w-16 h-16 rounded-full bg-gradient-to-br ${category.gradient} flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform duration-300`}
-              >
-                {category.icon}
-              </div>
-              <span className="text-lg font-medium text-gray-800 dark:text-gray-100 group-hover:text-purple-500 dark:group-hover:text-purple-400 transition-colors">
-                {category.name}
-              </span>
-              <span className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                View Collection
-              </span>
-            </Link>
+              {category.charAt(0).toUpperCase() + category.slice(1)}
+            </button>
           ))}
         </div>
       </div>
 
-      {/* Scroll Buttons */}
-      <button
-        onClick={scrollLeft}
-        className="absolute -left-14 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white dark:bg-dark-300 shadow-lg flex items-center justify-center hover:bg-gray-100 dark:hover:bg-dark-400 transition-colors"
-      >
-        <svg
-          className="w-6 h-6 text-gray-600 dark:text-gray-300"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M15 19l-7-7 7-7"
-          />
-        </svg>
-      </button>
-
-      <button
-        onClick={scrollRight}
-        className="absolute -right-14 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white dark:bg-dark-300 shadow-lg flex items-center justify-center hover:bg-gray-100 dark:hover:bg-dark-400 transition-colors"
-      >
-        <svg
-          className="w-6 h-6 text-gray-600 dark:text-gray-300"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M9 5l7 7-7 7"
-          />
-        </svg>
-      </button>
+      {/* Artwork Grid */}
+      {loading ? (
+        <div className="flex justify-center items-center py-12">
+          <div className="text-white">Loading...</div>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-4">
+          {artworks.map((artwork) => (
+            <div
+              key={artwork.id}
+              className="bg-white/5 rounded-xl overflow-hidden group hover:bg-white/10 transition-colors"
+            >
+              <div className="aspect-square relative">
+                <Image
+                  src={artwork.image_url}
+                  alt={artwork.title}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+                  <div>
+                    <h3 className="text-white font-medium mb-1">
+                      {artwork.title}
+                    </h3>
+                    <p className="text-gray-300 text-sm">${artwork.price}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
