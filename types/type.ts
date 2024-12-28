@@ -5,6 +5,8 @@ type ArtworkType = {
   price: number;
   image_url: string;
   description: string;
+  category: string;
+  created_at: string;
 };
 
 export type { ArtworkType };

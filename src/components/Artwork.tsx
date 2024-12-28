@@ -16,9 +16,11 @@ export default function Artwork({ artwork }: { artwork: ArtworkType }) {
       />
       <div className="mt-4 flex flex-col gap-2">
         <h2 className="text-white text-2xl font-bold">{artwork.title}</h2>
-        <p className="text-white text-sm">{artwork.artist}</p>
-        <p className="text-white text-sm">${artwork.price}</p>
-        <button className="text-white text-sm">View Details</button>
+        <p className="text-gray-500 text-sm">{artwork.artist}</p>
+        <div className="flex flex-row justify-between">
+          <p className="text-white text-2xl font-bold">${artwork.price}</p>
+          <button className="text-white text-sm">View Details</button>
+        </div>
       </div>
     </div>
   );
