@@ -96,7 +96,6 @@ Screenshots will be added in the future.
 
 - Add enhanced search and filtering for artworks.
 - Integrate user authentication.
-- Enable multi-language support for a global audience.
 - Add animations and micro-interactions.
 
 ## License
