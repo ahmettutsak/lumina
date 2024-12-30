@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "../lib/supabase";
+import Image from "next/image";
 
 interface Artwork {
   id: string;
@@ -93,9 +94,11 @@ export default function Home() {
                 >
                   <div className="relative aspect-[4/5] overflow-hidden rounded-lg">
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-black/85 to-black/50 opacity-0 group-hover:opacity-90 transition-all duration-300" />
-                    <img
+                    <Image
                       src={artwork.image_url}
                       alt={artwork.title}
+                      width={800}
+                      height={1000}
                       className="w-full h-full object-cover transform group-hover:scale-105 transition-all duration-700"
                     />
                     <div className="absolute inset-0 p-6 flex flex-col justify-end opacity-0 group-hover:opacity-100 transition-all duration-300">

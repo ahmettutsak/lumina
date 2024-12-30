@@ -99,9 +99,9 @@ export default function AdminArtworks() {
                 <Image
                   src={artwork.image_url}
                   alt={artwork.title}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  width={400}
+                  height={500}
+                  className="w-full h-full object-cover"
                 />
               </div>
               <div className="p-6">
